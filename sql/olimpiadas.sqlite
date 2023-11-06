@@ -1,0 +1,49 @@
+PRAGMA synchronous = OFF;
+PRAGMA journal_mode = MEMORY;
+BEGIN TRANSACTION;
+CREATE TABLE `atleta` (
+  `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
+,  `nombre` varchar(200) DEFAULT NULL
+,  `sex` char(1) DEFAULT NULL
+,  `alt` integer DEFAULT NULL
+,  `peso` decimal(5,2) DEFAULT NULL
+);
+CREATE TABLE `deporte` (
+  `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
+,  `nombre` varchar(200) DEFAULT NULL
+);
+CREATE TABLE `equipo` (
+  `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
+,  `noc` char(3) DEFAULT NULL
+,  `nombre` varchar(200) DEFAULT NULL
+);
+CREATE TABLE `evento` (
+  `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
+,  `nombre` varchar(200) DEFAULT NULL
+,  `deporte` integer DEFAULT NULL
+,  `olimpiada` integer DEFAULT NULL
+,  CONSTRAINT `deporte` FOREIGN KEY (`deporte`) REFERENCES `deporte` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+,  CONSTRAINT `olimpiada` FOREIGN KEY (`olimpiada`) REFERENCES `olimpiada` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE TABLE `olimpiada` (
+  `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
+,  `games` varchar(100) DEFAULT NULL
+,  `year` integer DEFAULT NULL
+,  `season` varchar(45) DEFAULT NULL
+,  `city` varchar(200) DEFAULT NULL
+);
+CREATE TABLE `participacion` (
+  `atleta` integer NOT NULL
+,  `evento` integer NOT NULL
+,  `equipo` integer NOT NULL
+,  `edad` integer DEFAULT NULL
+,  `medalla` varchar(10) DEFAULT NULL
+,  PRIMARY KEY (`atleta`,`evento`)
+,  CONSTRAINT `fk_participacion_atleta` FOREIGN KEY (`atleta`) REFERENCES `atleta` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+,  CONSTRAINT `fk_participacion_equipo` FOREIGN KEY (`equipo`) REFERENCES `equipo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+,  CONSTRAINT `fk_participacion_evento` FOREIGN KEY (`evento`) REFERENCES `evento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+CREATE INDEX "idx_evento_deporte_idx" ON "evento" (`deporte`);
+CREATE INDEX "idx_participacion_evento_idx" ON "participacion" (`evento`);
+CREATE INDEX "idx_participacion_fk_participacion_1_idx" ON "participacion" (`equipo`);
+END TRANSACTION;
