@@ -89,7 +89,9 @@ class BaseDeDatos:
                 cur = self.con.cursor()
                 for _ in cur.execute(sqlFile.read(), multi=True):
                     pass
-                self.con.commit()
+            except RuntimeError as re:
+                if "StopIteration" in re.__str__():
+                    self.con.commit()
             except Exception as e:
                 print(f"Error: {e}")
             finally:
